@@ -45,7 +45,6 @@ public class EventListener implements Listener {
 
 				if (plugin.useScoreboard) {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						@Override
 						public void run() {
 							WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).setScoreboard(p.getName());
 							WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).updateScore();

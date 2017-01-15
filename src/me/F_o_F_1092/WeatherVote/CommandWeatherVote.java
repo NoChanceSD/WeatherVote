@@ -28,7 +28,6 @@ public class CommandWeatherVote implements CommandExecutor {
 		this.plugin = plugin;
 	}
 
-	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 		if (args.length == 0) {
 			if (!(cs instanceof Player) || !plugin.useVoteGUI) {
@@ -101,10 +100,10 @@ public class CommandWeatherVote implements CommandExecutor {
 					replaceCommand = replaceCommand.replace("[COMMAND]", CommandListener.getCommand("/wv info").getColoredCommand());
 					cs.sendMessage(plugin.msg.get("[WeatherVote]") + replaceCommand); 
 				} else {
-					cs.sendMessage("§9-----§f[§9Weather§bVote§f]§9-----");
-					cs.sendMessage("§9Version: §b" + UpdateListener.getUpdateStringVersion());
-					cs.sendMessage("§9By: §bF_o_F_1092");
-					cs.sendMessage("§9WeatherVote: §bhttps://fof1092.de/Plugins/WV");
+					cs.sendMessage("ï¿½9-----ï¿½f[ï¿½9Weatherï¿½bVoteï¿½f]ï¿½9-----");
+					cs.sendMessage("ï¿½9Version: ï¿½b" + UpdateListener.getUpdateStringVersion());
+					cs.sendMessage("ï¿½9By: ï¿½bF_o_F_1092");
+					cs.sendMessage("ï¿½9WeatherVote: ï¿½bhttps://fof1092.de/Plugins/WV");
 				}
 			} else if (args[0].equalsIgnoreCase("stats")) {
 				if (args.length != 1) {

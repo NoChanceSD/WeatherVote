@@ -15,7 +15,6 @@ import me.F_o_F_1092.WeatherVote.PluginManager.TabCompleteListener;
 
 public class CommandWeatherVoteTabCompleter implements TabCompleter {
 
-	@Override
 	public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
 			List<String> strings = TabCompleteListener.completeTab(cs, CommandListener.getMainCommand().replace("/", ""));

@@ -38,7 +38,6 @@ public class UpdateListener {
 	
 	public static void checkForUpdate(Main plugin) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			@Override
 			public void run() {
 				try {
 					TrustManager[] trustAllCerts = new TrustManager[] {
