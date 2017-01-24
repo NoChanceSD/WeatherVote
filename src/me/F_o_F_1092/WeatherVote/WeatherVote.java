@@ -139,7 +139,10 @@ public class WeatherVote {
 
 	void updateScore() {
 		for (Player p : getAllPlayersAtWorld()) {
-			Objective objective = Bukkit.getPlayer(p.getName()).getScoreboard().getObjective("WeatherVote");
+			Player player = Bukkit.getPlayer(p.getName());
+			if (player.getScoreboard() == null)
+				continue;
+			Objective objective = player.getScoreboard().getObjective("WeatherVote");
 			Score scoreYes;
 			try {
 				scoreYes = objective.getScore(plugin.msg.get("text.3"));

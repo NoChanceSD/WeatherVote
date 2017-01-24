@@ -11,8 +11,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import me.F_o_F_1092.WeatherVote.PluginManager.UpdateListener;
-
 public class EventListener implements Listener {
 
 	private Main plugin;
@@ -24,12 +22,6 @@ public class EventListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		final Player p = e.getPlayer();
-
-		if (UpdateListener.isAnewUpdateAvailable()) {
-			if (p.hasPermission("WeatherVote.UpdateMessage")) {
-				p.sendMessage(plugin.msg.get("[WeatherVote]") + plugin.msg.get("msg.16"));
-			}
-		}
 
 		if (WeatherVoteManager.isVotingAtWorld(p.getWorld().getName())) {
 			WeatherVote wv = WeatherVoteManager.getVotingAtWorld(p.getWorld().getName());
