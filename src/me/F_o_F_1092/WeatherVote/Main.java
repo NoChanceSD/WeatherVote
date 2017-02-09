@@ -291,11 +291,6 @@ public class Main extends JavaPlugin {
 			if (WeatherVoteManager.isVotingAtWorld(w.getName())) {
 				WeatherVote wv = WeatherVoteManager.getVotingAtWorld(w.getName());
 				if (!wv.isTimeoutPeriod()) {
-					if (useScoreboard) {
-						for (Player p : wv.getAllPlayersAtWorld()) {
-							wv.removeScoreboard(p.getName());
-						}
-					}
 					if (useBossBarAPI) {
 						for (Player p : wv.getAllPlayersAtWorld()) {
 							wv.removeBossBar(p.getName());

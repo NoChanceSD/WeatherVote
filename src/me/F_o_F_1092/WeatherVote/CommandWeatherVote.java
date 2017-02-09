@@ -168,10 +168,10 @@ public class CommandWeatherVote implements CommandExecutor {
 
 											WeatherVoteManager.getVault().withdrawPlayer(p, plugin.price);
 
-											wv = new WeatherVote(p.getWorld().getName(), p.getName(), "Sunny", plugin.price);
+											wv = new WeatherVote(p.getWorld().getName(), p, "Sunny", plugin.price);
 										}
 									} else {
-										wv = new WeatherVote(p.getWorld().getName(), p.getName(), "Sunny", 0.00);
+										wv = new WeatherVote(p.getWorld().getName(), p, "Sunny", 0.00);
 
 										if (plugin.price > 0.0) {
 											System.out.println("\u001B[31m[WeatherVote] ERROR: 007 | The plugin Vault was not found, but a Voting-Price was set in the Config.yml file.\u001B[0m");
@@ -243,10 +243,10 @@ public class CommandWeatherVote implements CommandExecutor {
 
 											WeatherVoteManager.getVault().withdrawPlayer(p, plugin.price);
 
-											wv = new WeatherVote(p.getWorld().getName(), p.getName(), "Rainy", plugin.price);
+											wv = new WeatherVote(p.getWorld().getName(), p, "Rainy", plugin.price);
 										}
 									} else {
-										wv = new WeatherVote(p.getWorld().getName(), p.getName(), "Rainy", 0.00);
+										wv = new WeatherVote(p.getWorld().getName(), p, "Rainy", 0.00);
 
 										if (plugin.price > 0.0) {
 											System.out.println("\u001B[31m[ote] ERROR: 007 | The plugin Vault was not found, but a Voting-Price was set in the Config.yml file.\u001B[0m");
@@ -362,7 +362,7 @@ public class CommandWeatherVote implements CommandExecutor {
 								if (!wv.timeoutPeriod) {
 									if (plugin.useScoreboard) {
 										for (Player p : wv.getAllPlayersAtWorld()) {
-											wv.removeScoreboard(p.getName());
+											wv.removeScoreboard(p);
 										}
 
 										if (plugin.useBossBarAPI) {

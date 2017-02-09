@@ -33,8 +33,9 @@ public class WeatherVote {
 	boolean onePlayerVoting = false;
 	BossBar bossBar;
 	private Scoreboard previousScoreboard;
+	private Scoreboard scoreboard;
 
-	WeatherVote(String worldName, String player, String time, double moneySpend) {
+	WeatherVote(String worldName, Player player, String time, double moneySpend) {
 		if (plugin.useVoteGUI) {
 			if (!plugin.votingGUI.isEmpty()) {
 				WeatherVoteManager.closeAllVoteingGUIs(worldName);
@@ -42,9 +43,8 @@ public class WeatherVote {
 		}
 
 		plugin.votes.put(worldName, this);
-		previousScoreboard = Bukkit.getPlayer(player).getScoreboard();
 		this.worldName = worldName;
-		this.players.add(player);
+		this.players.add(player.getName());
 		this.weather = time;
 		timeoutPeriod = false;
 		this.moneySpend = moneySpend;
@@ -52,13 +52,33 @@ public class WeatherVote {
 		if (getAllPlayersAtWorld().size() == 1 || plugin.checkForHiddenPlayers && getAllPlayersAtWorld().size() - getNumberOfHiddenPlayers() <= 1) {
 			this.onePlayerVoting = true;
 
-			this.voteYes(player);
+			this.voteYes(player.getName());
 
 			startTimer(2, 0);
 		} else {
 			if (plugin.useScoreboard) {
+				previousScoreboard = player.getScoreboard();
+				scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+				Objective objective = scoreboard.registerNewObjective("WeatherVote", "dummy");
+				objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+				if (getWeather().equals("Sunny")) {
+					try {
+						objective.setDisplayName(plugin.msg.get("[WeatherVote]") + plugin.msg.get("text.1"));
+					} catch (Exception e1) {
+						objective.setDisplayName("§f[§9Weather§bVote§f] SUNNY");
+						System.out.println("\u001B[31m[WeatherVote] The scoreboard name caused a problem. (Message: text.1) [" + e1.getMessage() + "]\u001B[0m");
+					}
+				} else {
+					try {
+						objective.setDisplayName(plugin.msg.get("[WeatherVote]") + plugin.msg.get("text.2"));
+					} catch (Exception e1) {
+						objective.setDisplayName("§f[§9Weather§bVote§f] RAINY");
+						System.out.println("\u001B[31m[WeatherVote] The scoreboard name caused a problem. (Message: text.2) [" + e1.getMessage() + "]\u001B[0m");
+					}
+				}
 				for (Player p : getAllPlayersAtWorld()) {
-					setScoreboard(p.getName());
+					setScoreboard(p);
 				}
 				updateScore();
 			}
@@ -88,7 +108,7 @@ public class WeatherVote {
 				}
 			}
 
-			this.voteYes(player);
+			this.voteYes(player.getName());
 
 			startTimer(1, plugin.remindingTime);
 			startTimer(2, plugin.votingTime);
@@ -96,34 +116,14 @@ public class WeatherVote {
 		startTimer(3, (plugin.timeoutPeriod + plugin.votingTime));
 	}
 
-	void setScoreboard(String player) {
-		Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
-		Objective objective = sb.registerNewObjective("WeatherVote", "dummy");
-		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-		if (getWeather().equals("Sunny")) {
-			try {
-				objective.setDisplayName(plugin.msg.get("[WeatherVote]") + plugin.msg.get("text.1"));
-			} catch (Exception e1) {
-				objective.setDisplayName("§f[§9Weather§bVote§f] SUNNY");
-				System.out.println("\u001B[31m[WeatherVote] The scoreboard name caused a problem. (Message: text.1) [" + e1.getMessage() + "]\u001B[0m");
-			}
-		} else {
-			try {
-				objective.setDisplayName(plugin.msg.get("[WeatherVote]") + plugin.msg.get("text.2"));
-			} catch (Exception e1) {
-				objective.setDisplayName("§f[§9Weather§bVote§f] RAINY");
-				System.out.println("\u001B[31m[WeatherVote] The scoreboard name caused a problem. (Message: text.2) [" + e1.getMessage() + "]\u001B[0m");
-			}
-		}
-		Bukkit.getPlayer(player).setScoreboard(sb);
+	void setScoreboard(Player player) {
+		player.setScoreboard(scoreboard);
 	}
 
-	void removeScoreboard(String player) {
+	void removeScoreboard(Player player) {
 		try {
-			Bukkit.getPlayer(player).getScoreboard().getObjective("WeatherVote").unregister();
 			if (previousScoreboard != null)
-				Bukkit.getPlayer(player).setScoreboard(previousScoreboard);
+				player.setScoreboard(previousScoreboard);
 		} catch (Exception e1) {
 			System.out.println("\u001B[31m[WeatherVote] The scoreboard could not be removed from the Player. [" + e1.getMessage() + "]\u001B[0m");
 		}
@@ -138,28 +138,23 @@ public class WeatherVote {
 	}
 
 	void updateScore() {
-		for (Player p : getAllPlayersAtWorld()) {
-			Player player = Bukkit.getPlayer(p.getName());
-			if (player.getScoreboard() == null)
-				continue;
-			Objective objective = player.getScoreboard().getObjective("WeatherVote");
-			Score scoreYes;
-			try {
-				scoreYes = objective.getScore(plugin.msg.get("text.3"));
-			} catch (Exception e1) {
-				scoreYes = objective.getScore(plugin.msg.get("text.2") + "YES");
-				System.out.println("\u001B[31m[WeatherVote] The scoreboard text for YES caused a problem. (Message: text.3) [" + e1.getMessage() + "]\u001B[0m");
-			}
-			scoreYes.setScore(getYesVotes());
-			Score scoreNo;
-			try {
-				scoreNo = objective.getScore(plugin.msg.get("text.4"));
-			} catch (Exception e1) {
-				scoreNo = objective.getScore(plugin.msg.get("text.2") + "NO");
-				System.out.println("\u001B[31m[WeatherVote] The scoreboard text for NO caused a problem. (Message: text.4) [" + e1.getMessage() + "]\u001B[0m");
-			}
-			scoreNo.setScore(getNoVotes());
+		Objective objective = scoreboard.getObjective("WeatherVote");
+		Score scoreYes;
+		try {
+			scoreYes = objective.getScore(plugin.msg.get("text.3"));
+		} catch (Exception e1) {
+			System.out.println("\u001B[31m[WeatherVote] The scoreboard text for YES caused a problem. (Message: text.3) [" + e1.getMessage() + "]\u001B[0m");
+			scoreYes = objective.getScore(plugin.msg.get("text.2") + "YES");
 		}
+		scoreYes.setScore(getYesVotes());
+		Score scoreNo;
+		try {
+			scoreNo = objective.getScore(plugin.msg.get("text.4"));
+		} catch (Exception e1) {
+			System.out.println("\u001B[31m[WeatherVote] The scoreboard text for NO caused a problem. (Message: text.4) [" + e1.getMessage() + "]\u001B[0m");
+			scoreNo = objective.getScore(plugin.msg.get("text.2") + "NO");
+		}
+		scoreNo.setScore(getNoVotes());
 	}
 
 	void cancelTimer(int task) {
@@ -245,7 +240,7 @@ public class WeatherVote {
 					if (!onePlayerVoting) {
 						if (plugin.useScoreboard) {
 							for (Player p : getAllPlayersAtWorld()) {
-								removeScoreboard(p.getName());
+								removeScoreboard(p);
 							}
 						}
 					}
@@ -373,13 +368,13 @@ public class WeatherVote {
 	}
 
 	List<Player> getAllPlayersAtWorld() {
-		List<Player> players = new ArrayList<Player>();
+		List<Player> worldPlayers = new ArrayList<Player>();
 		for (Player p : Bukkit.getWorld(this.worldName).getPlayers()) {
-			if (!players.contains(p.getName()) && !plugin.checkForHiddenPlayers || !players.contains(p.getName()) && plugin.checkForHiddenPlayers && !isHidden(p)) {
-				players.add(p);
+			if (!worldPlayers.contains(p.getName()) && !plugin.checkForHiddenPlayers || !worldPlayers.contains(p.getName()) && plugin.checkForHiddenPlayers && !isHidden(p)) {
+				worldPlayers.add(p);
 			}
 		}
-		return players;
+		return worldPlayers;
 	}
 
 	void sendMessage(String message) {

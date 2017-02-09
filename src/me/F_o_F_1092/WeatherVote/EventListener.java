@@ -38,7 +38,7 @@ public class EventListener implements Listener {
 				if (plugin.useScoreboard) {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 						public void run() {
-							WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).setScoreboard(p.getName());
+							WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).setScoreboard(p);
 							WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).updateScore();
 						}
 					}, 1L);
@@ -63,7 +63,7 @@ public class EventListener implements Listener {
 			WeatherVote wv = WeatherVoteManager.getVotingAtWorld(p.getWorld().getName());
 			if (!wv.isTimeoutPeriod()) {
 				if (plugin.useScoreboard) {
-					wv.removeScoreboard(p.getName());
+					wv.removeScoreboard(p);
 				}
 				
 				if (plugin.useBossBarAPI) {
@@ -91,7 +91,7 @@ public class EventListener implements Listener {
 			WeatherVote wv = WeatherVoteManager.getVotingAtWorld(p.getWorld().getName());
 			if (!wv.isTimeoutPeriod()) {
 				if (plugin.useScoreboard) {
-					wv.removeScoreboard(p.getName());
+					wv.removeScoreboard(p);
 				}
 			
 				if (plugin.useBossBarAPI) {
@@ -120,7 +120,7 @@ public class EventListener implements Listener {
 				WeatherVote wv = WeatherVoteManager.getVotingAtWorld(e.getFrom().getName());
 				if (!wv.isTimeoutPeriod()) {
 					if (plugin.useScoreboard) {
-						wv.removeScoreboard(p.getName());
+						wv.removeScoreboard(p);
 					}
 				
 					if (plugin.useBossBarAPI) {
@@ -147,7 +147,7 @@ public class EventListener implements Listener {
 					p.sendMessage(plugin.msg.get("[WeatherVote]") + text);
 
 					if (plugin.useScoreboard) {
-						WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).setScoreboard(p.getName());
+						WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).setScoreboard(p);
 						WeatherVoteManager.getVotingAtWorld(p.getWorld().getName()).updateScore();
 					}
 					
